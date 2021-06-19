@@ -1449,6 +1449,10 @@ type MTLNewRenderPipelineStateWithReflectionCompletionHandler = extern fn(render
 type MTLNewComputePipelineStateCompletionHandler = extern fn(computePipelineState: id, error: id);
 type MTLNewComputePipelineStateWithReflectionCompletionHandler = extern fn(computePipelineState: id, reflection: id, error: id);*/
 
+#[derive(Debug, Copy, Clone)]
+pub enum _IOSurface { }
+pub type IOSurfaceRef = *mut _IOSurface;
+
 pub enum MTLDevice {}
 
 foreign_obj_type! {
@@ -1929,6 +1933,14 @@ impl DeviceRef {
 
     pub fn new_texture(&self, descriptor: &TextureDescriptorRef) -> Texture {
         unsafe { msg_send![self, newTextureWithDescriptor: descriptor] }
+    }
+    
+    pub fn new_texture_with_surface_plane(&self, descriptor: &TextureDescriptorRef, iosurface: IOSurfaceRef, plane: NSUInteger) -> Texture {
+        unsafe { 
+            msg_send![self, newTextureWithDescriptor: descriptor
+                                           iosurface: iosurface
+                                               plane: plane] 
+        }
     }
 
     pub fn new_sampler(&self, descriptor: &SamplerDescriptorRef) -> SamplerState {
